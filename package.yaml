@@ -1,0 +1,31 @@
+name:        deth
+version:     "0.0"
+synopsis:    Disassembler for Ethereum Virtual Machine
+license:     MIT
+author:      Max Taldykin
+maintainer:  <max@formalmethods.ru>
+category:    Development
+
+dependencies:
+  - base
+  - containers
+  - text
+
+default-extensions:
+  - LambdaCase
+  - FlexibleContexts
+  - FlexibleInstances
+  - MultiParamTypeClasses
+  - OverloadedStrings
+  - RecordWildCards
+
+ghc-options:
+  - -Wall
+  - -threaded
+  - -O2
+  - -funbox-strict-fields
+
+executables:
+  deth:
+    source-dirs: src
+    main: Main.hs
