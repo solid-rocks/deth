@@ -9,6 +9,7 @@ category:    Development
 dependencies:
   - base
   - containers
+  - vector
   - text
 
 default-extensions:
