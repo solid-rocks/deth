@@ -1,15 +1,13 @@
 
 module Main where
 
-import           Control.Monad (forM_)
 import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as L
 import qualified Data.Text.Lazy.IO as L
 
-
 import Data.Word (Word8)
+import Numeric (readHex, showHex)
 import Text.Printf (printf)
-import Numeric (readHex)
 
 import AppendixH as Instr
 
@@ -19,9 +17,7 @@ main = do
   txt <- L.getContents
   case parseHex txt of
     Left err -> putStrLn $ "ERROR: " ++ err
-    Right bytes -> forM_ (parseBytes bytes) $ \case
-      Left err -> putStrLn $ "ERROR: " ++ err
-      Right instr -> print instr
+    Right bytes -> mapM_ print $ parseBytes bytes
 
 
 parseHex :: Text -> Either String [Word8]
@@ -34,15 +30,25 @@ parseHex
   . L.strip
 
 
-parseBytes :: [Word8] -> [Either String Instruction]
+data Instr = Instr {
+  op  :: InstrDesc,
+  arg :: [Word8],
+  pos :: Int
+}
+
+instance Show Instr where
+  show (Instr op arg i) = printf "%04x: %s%s %s"
+    i
+    (name op) (maybe "" show $ variant op)
+    (concatMap (`showHex` "") arg)
+
+
+parseBytes :: [Word8] -> [Instr]
 parseBytes = loop . zip [(0::Int)..]
   where
     loop [] = []
     loop ((i, code) : rest)
       = case Instr.fromCode code of
-        PUSH n _ -> case splitAt n rest of
-          (arg, rest')
-            | length arg == n -> Right (PUSH n $ map snd arg) : loop rest'
-            | otherwise
-              -> [Left $ printf "Not enough bytes for PUSH %i at byte %i" n i]
-        instr -> Right instr : loop rest
+        op@(InstrDesc {argSize = Just n}) -> case splitAt n rest of
+          (arg, rest') -> Instr op (map snd arg) i : loop rest'
+        op -> Instr op [] i : loop rest
