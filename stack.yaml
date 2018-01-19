@@ -1,7 +1,9 @@
 
-resolver: lts-8.6
+resolver: lts-10.3
 
 packages:
   - '.'
 
-extra-deps: []
+extra-deps:
+  - git: https://github.com/solid-rocks/evm-bytecode-hs
+    commit: a8ed29c68c940b617e04ed25e56a110447e434e0
