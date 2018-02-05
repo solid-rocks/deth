@@ -6,4 +6,4 @@ packages:
 
 extra-deps:
   - git: https://github.com/solid-rocks/evm-bytecode-hs
-    commit: a8ed29c68c940b617e04ed25e56a110447e434e0
+    commit: 124a5a610399d5316e0ef06b846bcbb2f16c3f50

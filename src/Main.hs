@@ -1,13 +1,15 @@
 
 module Main where
 
+import           Control.Monad (forM_)
 import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as LT
 import qualified Data.Text.Lazy.IO as LT
 import qualified Data.ByteString.Lazy as LB
+import           Numeric (readHex)
+import           Text.Printf
 
-import Numeric (readHex)
-import EVM.Instructions (readProgram)
+import EVM.Instructions (readProgram, Instruction(..))
 
 
 main :: IO ()
@@ -15,7 +17,8 @@ main = do
   txt <- LT.getContents
   case parseHex txt of
     Left err -> putStrLn $ "ERROR: " ++ err
-    Right bytes -> mapM_ print $ readProgram bytes 0
+    Right bytes -> forM_ (readProgram bytes 0) $ \(offset, instr) -> do
+      printf "0x%04x %s\n" offset (show instr)
 
 
 parseHex :: Text -> Either String LB.ByteString
